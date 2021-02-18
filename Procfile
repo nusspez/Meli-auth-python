@@ -1,1 +1,1 @@
-web: gunicorn page:app
+web: gunicorn routes:app
