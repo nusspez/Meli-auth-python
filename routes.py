@@ -1,10 +1,18 @@
-from app import app
-from flask import redirect,request,jsonify
-import os 
-from app import config
+
+from flask import Flask,redirect,request,jsonify
+import os
 import urllib.parse
 import urllib.request
 import json
+
+os.environ['CLIENT_ID'] = '7322743982300021'
+os.environ['CLIENT_SECRET'] = 'ovxdNELVxYexN388ULyM8ViGOA7rCk8s'
+os.environ['REDIRECT_URI'] = 'https://fathomless-taiga-09672.herokuapp.com/user'
+
+
+app = Flask(__name__)
+PORT = 5000
+DEBUG = False
 
 @app.route('/')
 @app.route('/index')
@@ -36,3 +44,6 @@ def show_user_profile():
     response = urllib.request.urlopen(req, json_data_bytes)
     decode_response = response.read().decode()
     return jsonify(decode_response) 
+
+if __name__ == '__main__':
+    app.run(port=PORT, debug=DEBUG)
