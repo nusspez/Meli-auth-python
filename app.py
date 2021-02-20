@@ -12,16 +12,19 @@ app = Flask(__name__)
 PORT = 5000
 DEBUG = True
 
-@app.route('/')
-@app.route('/index', methods=["GET", "POST"])
+@app.route('/', methods=["GET", "POST"])
 def index():
-    client_id = os.getenv('CLIENT_ID')
-    redirect_uri = os.getenv('REDIRECT_URI')
-    url = f"http://auth.mercadolibre.com.mx/authorization?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
-    req = urllib.request.Request(url)
-    f = urllib.request.urlopen(req) 
-    the_page = f.geturl()
-    return redirect(str(the_page), code=302)
+    if request.method == 'POST':
+        if request.form['submit_button'] == 'Do Something': 
+            client_id = os.getenv('CLIENT_ID')
+            redirect_uri = os.getenv('REDIRECT_URI')
+            url = f"http://auth.mercadolibre.com.mx/authorization?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
+            req = urllib.request.Request(url)
+            f = urllib.request.urlopen(req) 
+            the_page = f.geturl()
+            return redirect(str(the_page), code=302)
+    return render_template("home.html")
+
 
 @app.route('/user')
 def show_user_profile():
