@@ -1,4 +1,4 @@
-from flask import Flask,redirect,request,jsonify
+from flask import Flask,redirect,request,jsonify,render_template
 import os
 import urllib.parse
 import urllib.request
@@ -8,21 +8,23 @@ os.environ['CLIENT_ID'] = '7322743982300021'
 os.environ['CLIENT_SECRET'] = 'ovxdNELVxYexN388ULyM8ViGOA7rCk8s'
 os.environ['REDIRECT_URI'] = 'https://fathomless-taiga-09672.herokuapp.com/user'
 
-
 app = Flask(__name__)
 PORT = 5000
-DEBUG = False
+DEBUG = True
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=["GET", "POST"])
 def index():
-    client_id = os.getenv('CLIENT_ID')
-    redirect_uri = os.getenv('REDIRECT_URI')
-    url = f"http://auth.mercadolibre.com.mx/authorization?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
-    req = urllib.request.Request(url)
-    f = urllib.request.urlopen(req) 
-    the_page = f.geturl()
-    return redirect(str(the_page), code=302)
+    if request.method == 'POST':
+        if request.form['submit_button'] == 'Do Something':
+            client_id = os.getenv('CLIENT_ID')
+            redirect_uri = os.getenv('REDIRECT_URI')
+            url = f"http://auth.mercadolibre.com.mx/authorization?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
+            req = urllib.request.Request(url)
+            f = urllib.request.urlopen(req) 
+            the_page = f.geturl()
+            return redirect(str(the_page), code=302)
+    return render_template("home.html")
 
 @app.route('/user')
 def show_user_profile():
@@ -43,6 +45,8 @@ def show_user_profile():
     response = urllib.request.urlopen(req, json_data_bytes)
     decode_response = response.read().decode()
     return jsonify(decode_response) 
+
+
 
 if __name__ == '__main__':
     app.run(port=PORT, debug=DEBUG)
